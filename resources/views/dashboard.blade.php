@@ -2,12 +2,12 @@
 <html>
 <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>DB Manager</title>
+    <title>safariDB</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     {{-- If you want broadcasting with Echo + Pusher or laravel-websockets, include Echo here --}}
 </head>
 <body>
-    <h1>Database Manager</h1>
+    <h1>safariDB Manager</h1>
 
     <div id="instances">
         @foreach($instances as $inst)
