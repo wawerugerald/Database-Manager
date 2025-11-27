@@ -35,6 +35,7 @@ class CheckDatabasesStatus extends Command
                 event(new DatabaseStatusChanged($instance));
                 // optionally notify
                 // Notification::route('mail','ops@example.com')->notify(new DatabaseStatusNotification($instance));
+                // Have not tested the notification feature. 
                 $this->info("Instance {$instance->name}: {$old} -> {$new}");
             }
         }

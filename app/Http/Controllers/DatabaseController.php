@@ -49,6 +49,7 @@ class DatabaseController extends Controller
             event(new DatabaseStatusChanged($instance));
             // optionally notify admins - using Notification::route or real user model
             // Notification::route('mail', config('mail.from.address'))->notify(new DatabaseStatusNotification($instance));
+            // I do not know if this works
             return response()->json(['status' => $status]);
         } catch (\Exception $e) {
             $instance->update(['status' => 'error', 'last_message' => $e->getMessage()]);
