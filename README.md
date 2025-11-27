@@ -20,7 +20,7 @@ safiriDB provides an elegant, unified interface for managing MySQL, PostgreSQL, 
 - 🛡 Use a secure, Laravel-driven architecture
 - 🔌 Extend the platform easily thanks to clean code and modular design
 
-Whether you’re managing local dev databases, staging instances, or simply want a centralized dashboard for your projects, ZawadiDB offers a lightweight, modern, and intuitive approach to database operations.
+Whether you’re managing local dev databases, staging instances, or simply want a centralized dashboard for your projects, safariiDB offers a lightweight, modern, and intuitive approach to database operations.
 
 ## ✨ Why I Built This
 
