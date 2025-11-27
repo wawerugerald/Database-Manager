@@ -1,30 +1,119 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>safariDB</title>
+    <title>SafiriDB Manager</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    {{-- If you want broadcasting with Echo + Pusher or laravel-websockets, include Echo here --}}
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        #instances {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            background: white;
+            width: 300px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease;
+            border-left: 6px solid #0077cc;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+            color: #222;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .status.running { color: #28a745; }
+        .status.stopped { color: #dc3545; }
+        .status.unknown { color: #6c757d; }
+
+        .btn-group {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .btn-start { background: #28a745; color: white; }
+        .btn-stop { background: #dc3545; color: white; }
+        .btn-refresh { background: #0077cc; color: white; }
+
+        .btn-start:hover { background: #218838; }
+        .btn-stop:hover { background: #c82333; }
+        .btn-refresh:hover { background: #0062a5; }
+
+        .last-msg {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>safariDB Manager</h1>
+    <h1>SafiriDB Manager</h1>
 
     <div id="instances">
         @foreach($instances as $inst)
-            <div id="instance-{{ $inst->id }}">
-                <h3>{{ $inst->name }} ({{ $inst->type }})</h3>
-                <p>Status: <span class="status">{{ $inst->status }}</span></p>
-                <p>Last: {{ $inst->last_message }}</p>
-                <button onclick="start({{ $inst->id }})">Start</button>
-                <button onclick="stop({{ $inst->id }})">Stop</button>
-                <button onclick="refresh({{ $inst->id }})">Refresh</button>
+        <div class="card" id="instance-{{ $inst->id }}">
+            <h3>{{ $inst->name }} <small>({{ $inst->type }})</small></h3>
+
+            <p>Status: 
+                <span class="status {{ strtolower($inst->status) }}">
+                    {{ $inst->status }}
+                </span>
+            </p>
+
+            <p class="last-msg">{{ $inst->last_message }}</p>
+
+            <div class="btn-group">
+                <button class="btn-start" onclick="start({{ $inst->id }})">Start</button>
+                <button class="btn-stop" onclick="stop({{ $inst->id }})">Stop</button>
+                <button class="btn-refresh" onclick="refresh({{ $inst->id }})">Refresh</button>
             </div>
-            <hr>
+        </div>
         @endforeach
     </div>
 
 <script>
-axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+axios.defaults.headers.common['X-CSRF-TOKEN'] =
+    document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 function start(id){
     axios.post(`/instances/${id}/start`)
@@ -45,20 +134,17 @@ function refresh(id){
 }
 
 function updateStatus(id, status){
-    const el = document.querySelector(`#instance-${id} .status`);
-    if(el) el.textContent = status;
+    const statusEl = document.querySelector(`#instance-${id} .status`);
+    statusEl.textContent = status;
+    statusEl.className = "status " + status.toLowerCase();
 }
 
-// Optional: basic polling every 15 seconds
-setInterval(function(){
-    document.querySelectorAll('[id^="instance-"]').forEach(div=>{
-        const id = div.id.replace('instance-','');
-        refresh(id);
+// Polling every 15 seconds
+setInterval(() => {
+    document.querySelectorAll('[id^="instance-"]').forEach(div => {
+        refresh(div.id.replace('instance-', ''));
     });
 }, 15000);
-
-// OPTIONAL: setup a websocket listener to update real-time
-// If you configure broadcasting, Echo can listen to 'db-status' channel and update UI on DatabaseStatusChanged events.
 
 </script>
 </body>
